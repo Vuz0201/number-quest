@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#e7f3e8">
+<title>Number Quest — Pastel Garden</title>
+<style>
+:root{--bg:#e7f3e8;--card:#f7fbf5;--green:#80b895;--dark:#397653;--muted:#64876c;--pink:#f5dde3;--line:#c8dec9}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 10% 8%,#f8fff6 0 7%,transparent 8%),var(--bg);color:var(--dark);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;align-items:center;justify-content:center;padding:20px}
+main{width:min(100%,460px);text-align:center}
+h1{font-size:clamp(1.8rem,8vw,2.5rem);margin:0 0 6px;letter-spacing:.02em}
+.subtitle{margin:0 0 22px;color:var(--muted)}
+.card{background:var(--card);border:1px solid #ffffff;border-radius:28px;padding:25px 20px;box-shadow:0 14px 35px #39765318}
+.leaf{font-size:1.25rem}
+.message{min-height:52px;display:flex;align-items:center;justify-content:center;font-weight:650;line-height:1.4;margin:0 0 14px}
+input{width:100%;font:inherit;font-size:1.2rem;text-align:center;color:var(--dark);background:white;border:2px solid var(--line);border-radius:15px;padding:14px;outline:none}
+input:focus{border-color:var(--green);box-shadow:0 0 0 4px #80b89533}
+button{font:inherit;font-weight:700;border:0;border-radius:15px;padding:13px 18px;min-height:48px;cursor:pointer;touch-action:manipulation}
+button:focus-visible{outline:3px solid var(--dark);outline-offset:3px}
+.primary{background:var(--green);color:white;width:100%;margin-top:12px}
+.primary:active{transform:scale(.99);background:#6da983}
+.secondary{background:var(--pink);color:var(--dark);margin-top:10px}
+.counter{color:var(--muted);margin:15px 0 0}
+.footer{font-size:.88rem;color:var(--muted);margin:20px 0 0}
+.pill{display:inline-block;border-radius:999px;background:#d5ead8;padding:7px 12px;font-size:.82rem;margin-bottom:14px}
+@media(prefers-reduced-motion:no-preference){.card{animation:appear .5s ease-out}@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}}
+</style>
+</head>
+<body>
+<main>
+  <div class="leaf" aria-hidden="true">🌿 ✿ 🍃</div>
+  <h1>NUMBER QUEST</h1>
+  <p class="subtitle">A little garden of numbers</p>
+  <section class="card" aria-label="Trò chơi đoán số">
+    <span class="pill">🌱 PASTEL GARDEN</span>
+    <p class="message" id="message" aria-live="polite">🍀 Đoán số bí mật từ 1 đến 100 nhé! 🍀</p>
+    <form id="guessForm">
+      <label for="guessInput" style="display:block;text-align:left;margin:0 0 8px">Số cậu đoán</label>
+      <input id="guessInput" type="number" min="1" max="100" step="1" inputmode="numeric" placeholder="Nhập số từ 1–100" autocomplete="off" required>
+      <button class="primary" type="submit">🌿 ĐOÁN SỐ!</button>
+    </form>
+    <p class="counter" id="counter">Số lượt đoán: 0</p>
+    <button class="secondary" id="restartButton" type="button">↻ Chơi lại</button>
+  </section>
+  <p class="footer">✿ Hít thở nhẹ nhàng và tận hưởng trò chơi ✿</p>
+</main>
+<script>
+(() => {
+  const message = document.getElementById('message');
+  const input = document.getElementById('guessInput');
+  const counter = document.getElementById('counter');
+  const form = document.getElementById('guessForm');
+  const restartButton = document.getElementById('restartButton');
+  let secret = newSecret();
+  let attempts = 0;
+  let won = false;
+  function newSecret(){ return Math.floor(Math.random() * 100) + 1; }
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (won) return;
+    const raw = input.value.trim();
+    const number = Number(raw);
+    if (raw === '' || !Number.isInteger(number) || number < 1 || number > 100) {
+      message.textContent = '🌱 Nhập một số nguyên từ 1 đến 100 nhé!';
+      input.focus();
+      return;
+    }
+    attempts += 1;
+    counter.textContent = `Số lượt đoán: ${attempts}`;
+    if (number < secret) {
+      message.textContent = '⬆️ Số bí mật LỚN HƠN!';
+    } else if (number > secret) {
+      message.textContent = '⬇️ Số bí mật NHỎ HƠN!';
+    } else {
+      won = true;
+      message.textContent = `🎉 Tuyệt vời! Đáp án là ${secret}. Cậu thắng rồi!`;
+    }
+    input.value = '';
+    input.focus();
+  });
+  restartButton.addEventListener('click', () => {
+    secret = newSecret();
+    attempts = 0;
+    won = false;
+    message.textContent = '🍀 Đoán số bí mật từ 1 đến 100 nhé! 🍀';
+    counter.textContent = 'Số lượt đoán: 0';
+    input.value = '';
+    input.focus();
+  });
+})();
+</script>
+</body>
+</html>
